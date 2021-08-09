@@ -12,14 +12,20 @@ const http = axios.create({
     'Content-Type': 'application/json'
   }
 })
-
+http.interceptors.response.use(req => {
+  return req
+}, error => {
+  if (error.response.status === 404) {
+    swal.fire({ icon: 'warning', text: 'Recurso não encontrado' })
+  }
+  return error
+})
 http.interceptors.response.use(response => {
   return response
 }, error => {
-  if (!error.status) {
+  if (error.status === undefined) {
     swal.fire({ icon: 'info', text: 'Rede indisponível' })
   }
-
   return error
 })
 Vue.prototype.$http = http

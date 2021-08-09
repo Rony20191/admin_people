@@ -4,6 +4,9 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import './plugins'
+import './utils/FederalDocument'
+import './utils/DataFormart'
+import './utils/TelefoneFormart'
 Vue.config.productionTip = false
 
 new Vue({

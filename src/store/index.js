@@ -22,7 +22,8 @@ export default new Vuex.Store({
   actions: {
     async getPeople ({ commit }, payload) {
       const { data } = await PeopleService.get('/people', payload)
-      commit('setPeople', data.results || [])
+      commit('setPeople', data.results)
+      return data
     },
     setLoading (state, payload) {
       state.loading = payload

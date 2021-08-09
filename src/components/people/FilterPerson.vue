@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-row>
     <v-col>
       <v-text-field placeholder="pesquisar nome" v-model.lazy="filter.nome" ></v-text-field>
@@ -13,6 +14,12 @@
       <v-btn color="primary" small rounded @click="getPerson">buscar</v-btn>
     </v-col>
   </v-row>
+  <v-row>
+    <v-col>
+      <v-divider/>
+    </v-col>
+  </v-row>
+  </div>
 </template>
 
 <script>

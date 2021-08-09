@@ -5,7 +5,9 @@
       <filter-person/>
     </v-card-title>
       <v-card-text>
-          <v-data-table :loading="loading" :items="people" :search="table.search" :headers="table.headers" dense>
+          <v-data-table  :items="people" :search="table.search" :headers="table.headers"
+           :options.sync="options"
+           :server-items-length="table.totalItems" dense>
             <template v-slot:top>
              <v-toolbar flat>
               <v-toolbar-title>Pessoas</v-toolbar-title>
@@ -47,6 +49,7 @@ export default {
   name: 'ListPeople',
   data () {
     return {
+      options: {},
       loading: true,
       table: {
         search: '',
@@ -56,7 +59,8 @@ export default {
           { text: 'Nome', value: 'name' },
           { text: 'Data nascimento', value: 'birthDate' },
           { text: 'Ações', value: 'actions' }
-        ]
+        ],
+        totalItems: 0
       }
     }
   },
@@ -69,6 +73,51 @@ export default {
     },
     remover () {
       this.$swal.fire({ icon: 'info', text: 'Funcionalidade não disponível' })
+    },
+    async fakeApiCall () {
+      const { sortBy, sortDesc, page, itemsPerPage } = this.options
+      let items = []
+      let total = 0
+      // call api
+      await this.$store.dispatch('getPeople', {
+        pageNumber: page,
+        pageSize: itemsPerPage
+      }).then(data => {
+        items = data.results
+        total = data.totalElements
+
+        if (sortBy.length === 1 && sortDesc.length === 1) {
+          items = items.sort((a, b) => {
+            const sortA = a[sortBy[0]]
+            const sortB = b[sortBy[0]]
+
+            if (sortDesc[0]) {
+              if (sortA < sortB) return 1
+              if (sortA > sortB) return -1
+              return 0
+            } else {
+              if (sortA < sortB) return -1
+              if (sortA > sortB) return 1
+              return 0
+            }
+          })
+        }
+
+        if (itemsPerPage > 0) {
+          items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        }
+      })
+
+      return {
+        items,
+        total
+      }
+    },
+    getDataFromApi () {
+      this.fakeApiCall().then(data => {
+        this.table.items = data.items
+        this.table.totalItems = data.total
+      })
     }
 
   },
@@ -77,9 +126,16 @@ export default {
       return this.$store.state.people
     }
   },
+  watch: {
+    options: {
+      handler () {
+        this.getDataFromApi()
+      },
+      deep: true
+    }
+  },
   mounted () {
-    this.$store.dispatch('getPeople')
-    this.loading = false
+    this.getDataFromApi()
   }
 
 }
