@@ -9,9 +9,11 @@
                 </v-tabs>
             </v-card-subtitle>
             <v-card-text>
-                {{person.name}}
+
                 <v-tabs-items v-model="tab">
-                  <v-tab-item  key='basico'></v-tab-item>
+                  <v-tab-item  key='basico'>
+                   <b> Nome: </b>   {{person.name}}
+                  </v-tab-item>
                   <v-tab-item  key='contacts'>
                     <card-contacts/>
                   </v-tab-item>

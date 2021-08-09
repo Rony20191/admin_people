@@ -8,24 +8,16 @@ const http = axios.create({
   crossDomain: true,
   headers: {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST'
+    'Access-Control-Allow-Methods': 'GET,PUT,POST',
+    'Content-Type': 'application/json'
   }
 })
 
 http.interceptors.response.use(response => {
   return response
 }, error => {
-  console.log(error)
-  if (error.response !== undefined && error.response.status === 500) {
-    swal.fire({
-      icon: 'info',
-      text: 'Rede indisponível'
-    })
-  } else {
-    swal.fire({
-      icon: 'info',
-      text: 'Rede indisponível'
-    })
+  if (!error.status) {
+    swal.fire({ icon: 'info', text: 'Rede indisponível' })
   }
 
   return error

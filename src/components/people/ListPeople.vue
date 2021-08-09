@@ -1,6 +1,9 @@
 <template>
 <v-container>
   <v-card>
+    <v-card-title>
+      <filter-person/>
+    </v-card-title>
       <v-card-text>
           <v-data-table :loading="loading" :items="people" :search="table.search" :headers="table.headers" dense>
             <template v-slot:top>
@@ -37,8 +40,10 @@
 </template>
 
 <script>
+import FilterPerson from './FilterPerson.vue'
 
 export default {
+  components: { FilterPerson },
   name: 'ListPeople',
   data () {
     return {

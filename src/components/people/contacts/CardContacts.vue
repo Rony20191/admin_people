@@ -13,9 +13,12 @@
          </v-btn>
           </v-toolbar>
         </template>
+        <template v-slot:item.type="{item}">
+          <span>{{item.type === 'PHONE' ?'Telefone' :'E-Mail'}}</span>
+        </template>
         <template v-slot:item.actions="{item}">
-          <v-btn>
-            <v-icon small title="Editar pessoa" icon>mdi-pencil-outline</v-icon>
+          <v-btn title="Editar pessoa" @click="editar (item)" icon>
+            <v-icon small >mdi-pencil-outline</v-icon>
                </v-btn>
                <v-btn icon small @click="remover(item)">
                <v-icon small  title="Deleta pessoa">mdi-delete-outline</v-icon>
@@ -26,7 +29,7 @@
         </template>
       </v-data-table>
     </v-card-text>
-    <dialog-contact ref="dialogContact" @onSaved="adicionar($event)"/>
+    <dialog-contact ref="dialogContact" @onSaved="adicionar($event)" @onSavedEdit="update($event)"/>
 </v-card>
 </template>
 
@@ -60,6 +63,14 @@ export default {
     adicionar (item) {
       console.log(item)
       this.table.items.push({ ...item })
+    },
+    editar (item) {
+      this.editedIndex = this.table.items.indexOf(item)
+      this.$refs.dialogContact.show(item)
+    },
+    update (item) {
+      Object.assign(this.table.items[this.editedIndex], { ...item })
+      this.editedIndex = -1
     }
   }
 

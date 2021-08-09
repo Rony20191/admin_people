@@ -7,10 +7,10 @@ export default class Abstract {
     this._loading = setLoading
   }
 
-  async get (uri, params = {}) {
+  async get (uri, params) {
     try {
       this._loading(true)
-      const response = await this._http.get(uri, params)
+      const response = await this._http.get(uri, { params: params })
       return Promise.resolve(response)
     } catch (error) {
       return Promise.reject(error)

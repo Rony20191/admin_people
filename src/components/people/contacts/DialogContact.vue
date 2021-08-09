@@ -14,8 +14,8 @@
         </v-card-title>
           <v-card-text>
               <v-form ref="formCadastroContact" lazy-validation v-model="form.valido">
-                  <v-select label="Tipo de contato (*)" placeholder="Tipo de contato" v-model="contact.type" :items="types"  :rules="rules.required"></v-select>
-                  <v-text-field label="Contato" v-mask="contact.type === 'PHONE'? '(##)# ####-####':''" v-model="contact.value" :rules="contact.type === 'PHONE'?rules.required:rules.email" />
+                  <v-select label="Tipo de contato" placeholder="Tipo de contato" v-model="contact.type" :items="types"  :rules="rules.required"></v-select>
+                  <v-text-field label="Contato" v-mask="contact.type === 'PHONE' ? '(##)# ####-####' : ''" v-model="contact.value" :rules="contact.type === 'PHONE'?rules.required:rules.email" />
                   <v-checkbox label="Ativo" v-model="contact.active" />
               </v-form>
           </v-card-text>
@@ -44,11 +44,6 @@ export default {
         value: '',
         active: false
       },
-      contactDefault: {
-        type: '',
-        value: '',
-        active: ''
-      },
       types: [
         { text: 'Email', value: 'EMAIL' },
         { text: 'Telefone', value: 'PHONE' }
@@ -67,7 +62,10 @@ export default {
   methods: {
     show (item = null) {
       if (item) {
-        Object.assign(this.contact, { ...item })
+        const { type, value, active } = item
+        this.contact.type = type
+        this.contact.active = active
+        this.contact.value = value
         this.dialog.edicao = true
       } else {
         this.dialog.edicao = false
@@ -78,7 +76,7 @@ export default {
       this.dialog.edicao = false
       this.dialog.show = false
       this.$nextTick(() => {
-        this.contact = Object.assign({}, this.contactDefault)
+        this.$refs.formCadastroContact.reset()
         this.$refs.formCadastroContact.resetValidation()
       })
     },
@@ -86,8 +84,12 @@ export default {
       if (!this.$refs.formCadastroContact.validate()) {
         return null
       }
+      if (this.dialog.edicao) {
+        this.$emit('onSavedEdit', Object.assign({}, this.contact))
+      } else {
+        this.$emit('onSaved', Object.assign({}, this.contact))
+      }
 
-      this.$emit('onSaved', Object.assign({}, this.contact))
       this.close()
     }
   },
@@ -99,9 +101,3 @@ export default {
 
 }
 </script>
-
-<style>
-.required label::after {
-    content: "*";
-}
-</style>
